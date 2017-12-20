@@ -5,6 +5,7 @@ package document;
  * @author UC San Diego Intermediate Programming MOOC team
  */
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -67,7 +68,35 @@ public abstract class Document {
 		// TODO: Implement this method so that you can call it from the 
 	    // getNumSyllables method in BasicDocument (module 2) and 
 	    // EfficientDocument (module 3).
-	    return 0;
+		word = word.toLowerCase();
+		char[] vowels = {'a', 'e' , 'i', 'o', 'u', 'y'};
+		char[] characterArray = word.toCharArray();
+		char[] characterArrayEndE;
+		boolean lastvowel = false;
+		int syllableCount = 0;
+
+
+		if (word.charAt(word.length() - 1) == 'e') {
+
+			characterArrayEndE = Arrays.copyOf(characterArray, characterArray.length - 1);
+			for (char letter: characterArrayEndE) {
+				if (Arrays.binarySearch(vowels, letter) >= 0){
+					characterArray = characterArrayEndE;
+				}
+			}
+		}
+
+		for (int i = 0; i < characterArray.length; i++) {
+			if (Arrays.binarySearch(vowels, characterArray[i]) >= 0 && !lastvowel){
+				syllableCount++;
+				lastvowel = true;
+			} else if (Arrays.binarySearch(vowels, characterArray[i]) >= 0 && lastvowel){
+				lastvowel = true;
+			} else {
+				lastvowel = false;
+			}
+		}
+		return syllableCount;
 	}
 	
 	/** A method for testing
@@ -132,7 +161,8 @@ public abstract class Document {
 	{
 	    // TODO: You will play with this method in week 1, and 
 		// then implement it in week 2
-	    return 0.0;
+		double flesch = 206.835 - 1.015 * getNumWords() / getNumSentences() - 84.6 * getNumSyllables() / getNumWords();
+		return flesch;
 	}
 	
 	
